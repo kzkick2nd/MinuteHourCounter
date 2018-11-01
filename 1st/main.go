@@ -7,10 +7,11 @@ import (
 
 func main() {
 	var e Events
-	e.Add(1)
-	e.Add(2)
 	e.Add(3)
-	e.MinuteCount()
+	e.Add(2)
+	e.Add(1)
+	fmt.Println(e.MinuteCount())
+	fmt.Println(e.HourCount())
 }
 
 type event struct {
@@ -27,11 +28,23 @@ func (e *Events) Add(count int) {
 }
 
 func (e *Events) MinuteCount() int {
-	fmt.Println(e.event)
-	return len(e.event)
+	var count int
+	var current = time.Now()
+	for _, v := range e.event {
+		if v.time.After(current.Add(-1 * time.Minute)) {
+			count += v.count
+		}
+	}
+	return count
 }
 
 func (e *Events) HourCount() int {
-	fmt.Println(e.event)
-	return len(e.event)
+	var count int
+	var current = time.Now()
+	for _, v := range e.event {
+		if v.time.After(current.Add(-1 * time.Hour)) {
+			count += v.count
+		}
+	}
+	return count
 }
