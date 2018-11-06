@@ -3,6 +3,7 @@ package mhcounter
 import (
 	"time"
 
+	"../conveyor"
 	"../trailingBucket"
 )
 
@@ -11,17 +12,23 @@ type Counter struct {
 	hourCounts   trailingBucket.Counter
 }
 
-func New() Counter {
-	return c.Counter{
-		minuteCounts: trailingBucket.Counter{buckets: 60, secs: 1},
-		hourCounts:   trailingBucket.Counter{buckets: 60, secs: 60},
+func NewCounter() *Counter {
+	return &Counter{
+		minuteCounts: trailingBucket.Counter{
+			Buckets:       conveyor.NewBuckets(60),
+			SecsPerBucket: 1,
+		},
+		hourCounts: trailingBucket.Counter{
+			Buckets:       conveyor.NewBuckets(60),
+			SecsPerBucket: 60,
+		},
 	}
 }
 
 func (c *Counter) Add(count int) {
 	var now = time.Now()
-	e.minuteCounts.Add(count, now)
-	e.hourCounts.Add(count, now)
+	c.minuteCounts.Add(count, now)
+	c.hourCounts.Add(count, now)
 }
 
 func (c *Counter) MinuteCount() int {

@@ -1,12 +1,16 @@
 package main
 
-import "./mhcounter"
+import (
+	"fmt"
+
+	"./mhcounter"
+)
 
 func main() {
-	c := mhcounter.New()
+	c := mhcounter.NewCounter()
 	c.Add(3)
 	c.Add(2)
 	c.Add(1)
-	c.MinuteCount()
-	c.HourCount()
+	fmt.Println(c.MinuteCount())
+	fmt.Println(c.HourCount())
 }
