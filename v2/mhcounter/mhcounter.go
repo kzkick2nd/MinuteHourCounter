@@ -1,8 +1,6 @@
 package mhcounter
 
-import (
-	"time"
-)
+import "time"
 
 type event struct {
 	count int
@@ -10,57 +8,56 @@ type event struct {
 }
 
 type Events struct {
-	minute_events []event
-	hour_events   []event
+	minuteEvents []event
+	hourEvents   []event
 
-	minute_count int
-	hour_count   int
+	minuteCount int
+	hourCount   int
 }
 
 func (e *Events) shiftOldEvents(now time.Time) {
-	var minute_ago = now.Add(-1 * time.Minute)
-	var hour_ago = now.Add(-1 * time.Hour)
+	var minuteAgo = now.Add(-1 * time.Minute)
+	var hourAgo = now.Add(-1 * time.Hour)
 
-	// Goでスライス減らすのつらいので、書籍のpopではなく新規sliceを用意（どうなん）
-	var minute_events []event
-	var hour_events []event
+	var minuteEvents []event
+	var hourEvents []event
 
-	for _, v := range e.minute_events {
-		if v.time.Before(minute_ago) {
-			e.hour_events = append(e.hour_events, v)
-			e.minute_count -= v.count
+	for _, v := range e.minuteEvents {
+		if v.time.Before(minuteAgo) {
+			e.hourEvents = append(e.hourEvents, v)
+			e.minuteCount -= v.count
 		} else {
-			minute_events = append(minute_events, v)
+			minuteEvents = append(minuteEvents, v)
 		}
 	}
-	e.minute_events = minute_events
+	e.minuteEvents = minuteEvents
 
-	for _, v := range e.hour_events {
-		if v.time.Before(hour_ago) {
-			e.hour_count -= v.count
+	for _, v := range e.hourEvents {
+		if v.time.Before(hourAgo) {
+			e.hourCount -= v.count
 		} else {
-			hour_events = append(hour_events, v)
+			hourEvents = append(hourEvents, v)
 		}
 	}
-	e.hour_events = hour_events
+	e.hourEvents = hourEvents
 }
 
 func (e *Events) Add(count int) {
 	var now = time.Now()
 	e.shiftOldEvents(now)
 
-	e.minute_events = append(e.minute_events, event{count, now})
+	e.minuteEvents = append(e.minuteEvents, event{count, now})
 
-	e.minute_count += count
-	e.hour_count += count
+	e.minuteCount += count
+	e.hourCount += count
 }
 
 func (e *Events) MinuteCount() int {
 	e.shiftOldEvents(time.Now())
-	return e.minute_count
+	return e.minuteCount
 }
 
 func (e *Events) HourCount() int {
 	e.shiftOldEvents(time.Now())
-	return e.hour_count
+	return e.hourCount
 }
