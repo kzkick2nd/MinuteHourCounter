@@ -30,12 +30,12 @@ func (e *Events) Add(count int) {
 	e.event = append(e.event, event{count, time.Now()})
 }
 
-// Return the accumulated count over the past 60 seconds.
+// MinuteCount returns the accumulated count over the past 60 seconds.
 func (e *Events) MinuteCount() int {
 	return e.countSince(time.Now().Add(-1 * time.Minute))
 }
 
-// Return the accumulated count over the past 3600 seconds.
+// HourCount returns the accumulated count over the past 3600 seconds.
 func (e *Events) HourCount() int {
 	return e.countSince(time.Now().Add(-1 * time.Hour))
 }
