@@ -1,3 +1,5 @@
+// Package mhcounter track the cumulative counts over the past minute and over the past hour.
+// Useful, for example, to track recent bandwidth usage.
 package mhcounter
 
 import "time"
@@ -42,6 +44,9 @@ func (e *Events) shiftOldEvents(now time.Time) {
 	e.hourEvents = hourEvents
 }
 
+// Add a new data point (count >= 0).
+// For the next minute, MinuteCount() will be larger by +count.
+// For the next hour, HourCount() will be larger by +count.
 func (e *Events) Add(count int) {
 	var now = time.Now()
 	e.shiftOldEvents(now)
@@ -52,11 +57,13 @@ func (e *Events) Add(count int) {
 	e.hourCount += count
 }
 
+// MinuteCount returns the accumulated count over the past 60 seconds.
 func (e *Events) MinuteCount() int {
 	e.shiftOldEvents(time.Now())
 	return e.minuteCount
 }
 
+// HourCount returns the accumulated count over the past 3600 seconds.
 func (e *Events) HourCount() int {
 	e.shiftOldEvents(time.Now())
 	return e.hourCount
