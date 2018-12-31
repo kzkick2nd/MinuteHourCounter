@@ -18,11 +18,11 @@ type Events struct {
 }
 
 func (e *Events) shiftOldEvents(now time.Time) {
-	var minuteAgo = now.Add(-1 * time.Minute)
-	var hourAgo = now.Add(-1 * time.Hour)
-
 	var minuteEvents []event
 	var hourEvents []event
+
+	minuteAgo := now.Add(-1 * time.Minute)
+	hourAgo := now.Add(-1 * time.Hour)
 
 	for _, v := range e.minuteEvents {
 		if v.time.Before(minuteAgo) {
